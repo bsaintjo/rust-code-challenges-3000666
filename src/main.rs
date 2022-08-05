@@ -1,5 +1,17 @@
+use chrono::{Local, TimeZone, Date};
+
+fn parse_to_date(a: &str) -> Date<Local> {
+    let mut pieces = a.split('-');
+    let year: i32 = pieces.next().unwrap().parse().unwrap();
+    let month: u32 = pieces.next().unwrap().parse().unwrap();
+    let day: u32 = pieces.next().unwrap().parse().unwrap();
+    Local.ymd(year, month, day)
+}
+
 fn weeks_between(a: &str, b: &str) -> i32 {
-    todo!()
+    let a = parse_to_date(a);
+    let b = parse_to_date(b);
+    (b - a).num_weeks() as i32
 }
 
 fn main() {
