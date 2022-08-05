@@ -19,11 +19,17 @@ impl Temperature {
     }
 
     fn to_celsius(&self) -> f32 {
-        todo!();
+        match self.scale {
+            Scale::Celsius => self.degrees,
+            Scale::Fahrenheit => (self.degrees - 32.) * (5. / 9.)
+        }
     }
 
     fn to_fahrenheit(&self) -> f32 {
-        todo!();
+        match self.scale {
+            Scale::Celsius => (self.degrees * (9. / 5.)) + 32.,
+            Scale::Fahrenheit => self.degrees,
+        }
     }
 }
 
@@ -31,7 +37,11 @@ fn main() {
     let temp = Temperature::new(20.0);
 
     println!("fun fact: 20°C is an integer in celsius and fahrenheit");
-    println!("          {:.1}°C = {:.1}°F", temp.to_celsius(), temp.to_fahrenheit());
+    println!(
+        "          {:.1}°C = {:.1}°F",
+        temp.to_celsius(),
+        temp.to_fahrenheit()
+    );
 }
 
 #[test]
@@ -58,4 +68,3 @@ fn freezing() {
     assert!(freezing.to_celsius() < 0.001);
     assert!(freezing.to_celsius() > -0.01);
 }
-
