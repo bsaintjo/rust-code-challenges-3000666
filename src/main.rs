@@ -14,10 +14,8 @@ trait Deadline {
 impl Deadline for ImportantEvent {
     // TODO: implement trait
     fn is_passed(&self) -> bool {
-        let now = Local::today();
-        let time_since = now - self.when;
-        time_since.num_days() > 0
-
+        let time_since = Local::today() - self.when;
+        time_since.num_hours() > 0
     }
 }
 
