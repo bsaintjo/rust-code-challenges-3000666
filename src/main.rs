@@ -1,5 +1,5 @@
 fn sum_with_missing(numbers: Vec<Option<i32>>) -> i32 {
-    todo!();
+    numbers.into_iter().flatten().sum()
 }
 
 fn main() {
