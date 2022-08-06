@@ -19,7 +19,7 @@ impl FromStr for Isbn {
         let digits: Vec<u8> = s
             .chars()
             .filter(|x| x.is_numeric())
-            .map(|x| x.to_digit(10).unwrap() as u8)
+            .map(|x: char| x.to_digit(10).unwrap() as u8)
             .collect();
         let (&check_digit, digits) = digits.split_last().unwrap();
         let dlen = digits.len();
@@ -46,12 +46,13 @@ impl std::fmt::Display for Isbn {
 
 // https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation
 fn calculate_check_digit(digits: &[u8]) -> u8 {
-    let result: u8 = digits
+    let result: u32 = digits
         .iter()
         .enumerate()
         .map(|(idx, &x)| if idx % 2 == 1 { x * 3 } else { x })
+        .map(|x| x as u32)
         .sum();
-    (10u8 - (result % 10u8)) % 10
+    ((10 - (result % 10)) % 10) as u8
 }
 
 fn main() {
