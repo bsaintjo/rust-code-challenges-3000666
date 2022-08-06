@@ -1,15 +1,40 @@
 use std::str::FromStr;
 
+#[derive(Debug)]
+enum IsbnError {
+    InputTooLong,
+    InputTooShort,
+    FailedChecksum,
+}
+
 struct Isbn {
     raw: String,
     digits: Vec<u8>,
 }
 
 impl FromStr for Isbn {
-    type Err = (); // TODO: replace with appropriate type
+    type Err = IsbnError; // TODO: replace with appropriate type
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        todo!();        
+        let digits: Vec<u8> = s
+            .chars()
+            .filter(|x| x.is_numeric())
+            .map(|x| x.to_digit(10).unwrap() as u8)
+            .collect();
+        let (&check_digit, digits) = digits.split_last().unwrap();
+        let dlen = digits.len();
+        if dlen > 12 {
+            Err(IsbnError::InputTooLong)
+        } else if dlen < 12 {
+            Err(IsbnError::InputTooShort)
+        } else if calculate_check_digit(digits) != check_digit {
+            Err(IsbnError::FailedChecksum)
+        } else {
+            Ok(Isbn {
+                raw: s.to_string(),
+                digits: digits.to_vec(),
+            })
+        }
     }
 }
 
@@ -21,7 +46,12 @@ impl std::fmt::Display for Isbn {
 
 // https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation
 fn calculate_check_digit(digits: &[u8]) -> u8 {
-    todo!()
+    let result: u8 = digits
+        .iter()
+        .enumerate()
+        .map(|(idx, &x)| if idx % 2 == 1 { x * 3 } else { x })
+        .sum();
+    (10u8 - (result % 10u8)) % 10
 }
 
 fn main() {
